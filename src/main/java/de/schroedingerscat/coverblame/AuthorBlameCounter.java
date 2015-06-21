@@ -5,9 +5,24 @@ package de.schroedingerscat.coverblame;
  */
 class AuthorBlameCounter {
 
+    /**
+     * Lines that have been tested
+     */
     private int testedLines;
+    
+    /**
+     * Lines with no test
+     */
     private int untestedLines;
+    
+    /**
+     * Total tested branches
+     */
     private int testedBranches;
+    
+    /**
+     * Total untested branches
+     */
     private int untestedBranches;
 
     public void incTestedLines() {

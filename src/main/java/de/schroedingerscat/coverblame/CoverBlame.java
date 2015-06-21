@@ -35,6 +35,22 @@ public class CoverBlame {
 
     private Blamer blamer;
 
+    public CoverBlame() {
+        blamer=new SVNBlamer();
+    }
+
+    public Map<String, AuthorBlameCounter> getCounters() {
+        return counters;
+    }
+    
+    public void addSourceDir(File sourceDir) {
+        sourceDirs.add(sourceDir);
+    }
+    
+    public void addExecutionData(File executionFile) {
+        executionData.add(executionFile);
+    }
+
     public void blame() throws JAXBException, XMLStreamException {
         for(File s : executionData) {
             evaluate(s);
@@ -99,6 +115,12 @@ public class CoverBlame {
         }
     }
 
+    /**
+     * Try to find the source file in all source dirs.
+     * 
+     * @param sourceName
+     * @return 
+     */
     private File getSourceFile(String sourceName) {
         for(File sourceDir : sourceDirs) {
             final File target = new File(sourceDir, sourceName);
@@ -110,6 +132,13 @@ public class CoverBlame {
         return null;
     }
 
+    /**
+     * Get count data for an author. 
+     * Create if it does not exist yet.
+     * 
+     * @param author
+     * @return 
+     */
     private AuthorBlameCounter getCounter(String author) {
         if(!counters.containsKey(author)) {
             counters.put(author, new AuthorBlameCounter());
@@ -119,23 +148,20 @@ public class CoverBlame {
     }
 
     public static void main(String[] args) throws Exception {
-        SVNBlamer b = new SVNBlamer();
-        CoverBlame c = new CoverBlame();
+        final CoverBlame c = new CoverBlame();
 
-        c.blamer = b;
+        final OptionParser parser = new OptionParser();
+        final OptionSpec<String> jacocoOpts = parser.accepts("jacoco").withRequiredArg();
+        final OptionSpec<String> sourceOpts = parser.accepts("source").withRequiredArg();
 
-        OptionParser parser = new OptionParser();
-        OptionSpec<String> jacocoOpts = parser.accepts("jacoco").withRequiredArg();
-        OptionSpec<String> sourceOpts = parser.accepts("source").withRequiredArg();
-
-        OptionSet options = parser.parse(args);
+        final OptionSet options = parser.parse(args);
 
         for(String jacocoFile : options.valuesOf(jacocoOpts)) {
-            c.executionData.add(new File(jacocoFile));
+            c.addExecutionData(new File(jacocoFile));
         }
 
         for(String sourceDir : options.valuesOf(sourceOpts)) {
-            c.sourceDirs.add(new File(sourceDir));
+            c.addSourceDir(new File(sourceDir));
         }
 
         c.blame();
