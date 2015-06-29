@@ -12,48 +12,119 @@
     </properties>
     
     
-     <build>
-    <plugins>
-      <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.12.3</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <forceRegenerate>true</forceRegenerate>
-          <extension>true</extension>
-          <args>
-            <arg>-Xinheritance</arg>
-          </args>
-          <bindingDirectory>src/main/resources/schema</bindingDirectory>
-          <bindingIncludes>
-            <include>binding.xml</include> <!-- This Should reference the binding files you use to configure the inheritance -->
-          </bindingIncludes>
-          <schemaDirectory>src/main/resources/schema</schemaDirectory>
-          <schemaIncludes>
-            <include>jacoco.xsd</include>
-          </schemaIncludes>
-          <generateDirectory>${project.build.directory}/generated-sources/jaxb</generateDirectory>
-          <generatePackage>jacoco.report</generatePackage>
-          <plugins>
+    <build>
+        <plugins>
             <plugin>
-              <groupId>org.jvnet.jaxb2_commons</groupId>
-              <artifactId>jaxb2-basics</artifactId>
-              <version>0.9.2</version>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.12.3</version>
+                <executions>
+                    <execution>
+                        <id>jacoco</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+
+                        <configuration>
+                            <forceRegenerate>true</forceRegenerate>
+                            <bindingDirectory>src/main/resources/schema</bindingDirectory>
+                            <schemaDirectory>src/main/resources/schema</schemaDirectory>
+                            <schemaIncludes>
+                                <include>jacoco.xsd</include>
+                            </schemaIncludes>
+                            <generateDirectory>${project.build.directory}/generated-sources/jaxb</generateDirectory>
+                            <generatePackage>jacoco.report</generatePackage>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics</artifactId>
+                                    <version>0.9.2</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>result</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+
+                        <configuration>
+                            <forceRegenerate>true</forceRegenerate>
+                            <bindingDirectory>src/main/resources/schema</bindingDirectory>
+                            <schemaDirectory>src/main/resources/schema</schemaDirectory>
+                            <schemaIncludes>
+                                <include>coverblame.xsd</include>
+                            </schemaIncludes>
+                            <generateDirectory>${project.build.directory}/generated-sources/jaxb</generateDirectory>
+                            <generatePackage>de.schroedingerscat.coverblame.result</generatePackage>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics</artifactId>
+                                    <version>0.9.2</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                    </execution>
+                    
+                </executions>
+            </plugin>   
+ 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>all</shadedClassifierName>
+
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- Main class -->
+                                    <mainClass>de.schroedingerscat.coverblame.CoverBlame</mainClass>
+                                </transformer>
+                            </transformers>
+
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-          </plugins>
-        </configuration>
-      </plugin>   
       
+            <plugin>
+                <groupId>us.bryon</groupId>
+                <artifactId>relaxng-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <dest>src/main/resources/</dest>
+                    <translations>
+                        <translation>
+                            <in>src/main/resources/schema/coverblame.rnc</in>
+                            <out>src/main/resources/schema/coverblame.xsd</out>
+                        </translation>
+                    </translations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>trang</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> 
       
-    </plugins>
-  </build>
+        </plugins>
+      
+
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.tmatesoft.svnkit</groupId>
@@ -65,6 +136,18 @@
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
             <version>4.8</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>

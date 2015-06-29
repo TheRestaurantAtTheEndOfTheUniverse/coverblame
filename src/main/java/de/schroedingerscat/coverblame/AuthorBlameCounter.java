@@ -49,6 +49,26 @@ class AuthorBlameCounter {
         untestedBranches += count;
     }
 
+    public int getTestedLines() {
+        return testedLines;
+    }
+
+    public int getUntestedLines() {
+        return untestedLines;
+    }
+
+    public int getTestedBranches() {
+        return testedBranches;
+    }
+
+    public int getUntestedBranches() {
+        return untestedBranches;
+    }
+
+    public int getTotalLines() {
+        return testedLines + untestedLines;
+    }
+    
     @Override
     public String toString() {
         return "testedLines=" + testedLines + ", untestedLines=" + untestedLines + ", testedBranches=" + testedBranches + ", untestedBranches=" + untestedBranches;

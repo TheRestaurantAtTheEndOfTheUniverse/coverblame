@@ -25,7 +25,7 @@ public class SVNBlamer implements Blamer {
     public Map<Integer, String> blame(File sourceFile) {
         final Map<Integer, String> blame = new HashMap<>();
 
-        if(!isVersioned(sourceFile)) {
+        if(isVersioned(sourceFile)) {
             try {
                 SVNLogClient log = new SVNLogClient(SVNWCUtil.createDefaultAuthenticationManager(), null);
                 log.doAnnotate(sourceFile, SVNRevision.UNDEFINED, SVNRevision.create(1), SVNRevision.HEAD, new ISVNAnnotateHandler() {

@@ -1,0 +1,31 @@
+namespace a = "http://relaxng.org/ns/compatibility/annotations/1.0"
+
+start = result
+
+result = element result { authorinfo* }
+
+authorinfo = element author-info {
+    attribute name { string },
+    summary,
+    lines?
+  }
+
+summary = element summary {
+  attribute untested-lines {xsd:nonNegativeInteger},
+  attribute tested-lines {xsd:nonNegativeInteger},
+  attribute tested-branches {xsd:nonNegativeInteger},
+  attribute untested-branches {xsd:nonNegativeInteger}
+}
+
+lines = element lines {
+  untested-line*
+}
+
+untested-line = element untested-line {
+  line-spec
+}
+
+line-spec = attribute fqn { string },
+            attribute line-number {xsd:nonNegativeInteger}
+
+
